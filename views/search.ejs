@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JSocial - Recherche</title>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	<script type="text/javascript">
+		$("document").ready(function(){
+			$(".ui.cards").hide().delay(1500).slideDown("slow");
+			$("img").attr("style","width:30%");
+		});
+	</script>
+</head>
+<body>
+	<% include navbar %>
+	<br>
+	<div class="ui inverted segment" id="connexion">
+		<form method="POST" action="http://localhost:8080/search/<%=login%>">
+			<div class="ui inverted form">
+				<div class="inline fields">
+					<div class="field">
+						<label for="login">Âge minimal</label>
+						<input type="number" min="10" max="100" name="agemin" required>
+					</div>
+					<div class="field">
+						<label for="password">Âge maximal</label>
+						<input type="number" min="10" max="100" name="agemax" required>
+					</div>
+					<label for="sexe">Sexe</label>
+					<div class="field">
+						<div class="ui radio checkbox">
+							<input type="radio" name="sexe" value="homme">
+							<label>Homme</label>
+						</div>
+   					</div>
+				    <div class="field">
+						<div class="ui radio checkbox">
+							<input type="radio" name="sexe" value="femme">
+							<label>Femme</label>
+						</div>
+				    </div>
+				    <div class="field">
+						<div class="ui radio checkbox">
+							<input type="radio" name="sexe" value="tous" checked>
+							<label>Tous</label>
+						</div>
+				    </div>
+				</div>
+				<div class="field">
+					<label for="login">Centres d'intérêts</label>
+						<div class="ui checkbox">
+							<input type="checkbox" name="interets" value="peche">
+							<label>Pêche</label>
+						</div>
+						<div class="ui checkbox">
+							<input type="checkbox" name="interets" value="foot">
+							<label>Foot</label>
+						</div>
+						<div class="ui checkbox">
+							<input type="checkbox" name="interets" value="programmation">
+							<label>Programmation</label>
+						</div>
+						<div class="ui checkbox">
+							<input type="checkbox" name="interets" value="jeuxvideos">
+							<label>Jeux vidéos</label>
+						</div>
+						<div class="ui checkbox">
+							<input type="checkbox" name="interets" value="lecture">
+							<label>Lecture</label>
+						</div>
+				</div>
+				<div style="text-align: center">
+					<input type="submit" value="Rechercher" class="ui submit button">
+				</div>
+			</div>
+		</form>
+	</div>
+	<% if (users) { %>
+		<div class="ui cards">
+			<% users.forEach((user) => { %>
+			<div class="card">
+				<div class="content">
+      				<img class="right floated mini ui image" src="/<%=user.identifiantSite%>/<%=user.image%>">
+      				<div class="header">
+        				<%=user.identifiantSite%>
+      				</div>
+	      			<div class="meta">
+	        			<%if(user.sexe=='F'){%>Femme<%}else{%>Homme<%}%> | <%=user.age%> ans
+	      			</div>
+					<div class="description">
+						<%=user.description%>
+					</div>
+    			</div>
+			    <div class="extra content">
+			    	<form method="POST" action="http://localhost:8080/like/<%=login%>/<%=user.identifiantSite%>">
+			        	<input type="submit" class="ui teal button" value="Aimer">
+		        	</form> 
+			    </div>		
+	        </div>
+	      	<% }) %>
+		</div>
+	<% } else if(suggestions) { %>
+		<h3>Voici des profils susceptibles de vous intéresser :</h3>
+		<div class="ui cards">
+			<% suggestions.forEach((user) => { %>
+			<div class="card">
+				<div class="content">
+      				<img class="right floated mini ui image" 
+      					src="/<%=user.identifiantSite%>/<%=user.image%>">
+      				<div class="header">
+        				<%=user.identifiantSite%>
+      				</div>
+	      			<div class="meta">
+	        			<%if(user.sexe=='F'){%>Femme<%}else{%>Homme<%}%> | <%=user.age%> ans
+	      			</div>
+					<div class="description">
+						<%=user.description%>
+					</div>
+    			</div>
+			    <div class="extra content">
+			    	<form method="POST" action="http://localhost:8080/like/<%=login%>/<%=user.identifiantSite%>">
+			        	<input type="submit" class="ui teal button" value="Aimer">
+		        	</form> 
+			    </div>		
+	        </div>
+	      	<% }) %>
+		</div>
+	<% } else if(!like){ %>
+	<h3>Aucun profil correspondant à votre recherche n'a été trouvé.</h3>
+	<% } else {%> <h3><%=msgFriend%></h3> <%}%>
+	<br><br><br><br><br><br>
+	<% include footer %>

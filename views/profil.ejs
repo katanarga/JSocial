@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>JSocial - Mon profil</title>
+		<script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+		<script type="text/javascript">
+			$(document).ready(
+				function(){
+					$("div > form").hide();
+					$(".card form").show();
+					$("img").first().fadeIn(2000, function suivante() {
+						$(this).next("img").fadeIn(2000,suivante);
+    				});
+    				$("div").mouseenter(function(){
+    					$(this).children("form").show();
+    				});
+    				$("div").mouseleave(function(){
+    					$(this).children("form").hide();
+    				});
+				});
+		</script>
+	</head>
+	<body>
+		<% include navbar %>
+		<style>
+			 ul {list-style-type: none;}
+			 ul li, #changerMDP{background-color: lightblue;}
+			 ul li:nth-child(2n) {background-color: dodgerblue;}
+		</style>
+		<ul>
+			<li><h3>Nom : <%=nom%></h3></li>
+			<li><h3>Prénom : <%=prenom%></h3></li>
+			<li><h3>Âge : <%=age%> ans</h3></li>
+			<li><h3>Identifiant : <%=login%></h3></li>
+			<li><h3>Sexe : <%if(sexe=='F') {%>Femme <%}else{%>Homme<%}%></h3></li>
+			<li>
+				<h3>Images :</h3> 
+				<% images.forEach((img) => { %>
+					<div style="display:inline-block;">
+						<img src="/<%=login%>/<%=img%>" width="100" height="100">
+						<form method="POST">
+							<button type="submit" class="green ui button" 
+								formaction="http://localhost:8080/profil/<%=login%>/imgProfil/<%=img%>">
+								Changer l'image de profil
+							</button><br>
+							<button type="submit" class="red ui button" 
+								formaction="http://localhost:8080/profil/<%=login%>/removeImage/<%=img%>">
+								Supprimer l'image
+							</button>
+						</form>
+					</div>
+				<% }); %>
+				<p style="color:<%=color%>"><%=msgImage%></p>
+				<form method="POST" encType="multipart/form-data"
+					action="http://localhost:8080/profil/<%=login%>/uploadImage">
+					<input type="file" name="image" required>
+					<input type="submit" class="green ui button" value="Ajouter 1 image">
+				</form>
+			</li>
+			<li>
+				<h3>Changer le mot de passe</h3>
+				<p style="color:<%=color%>"><%=msgPassword%></p>
+				<form id="changerMDP" class="ui large form" method="POST" 
+					action="http://localhost:8080/profil/<%=login%>/changePassword">
+					<div class="ui stacked segment">
+						<div class="field">
+							<label for="newPassword">Nouveau mot de passe</label>
+							<input type="password" name="newPassword" required>
+						</div>
+						<div class="field">
+							<label for="cnewPassword">Confirmer le nouveau mot de passe</label>
+							<input type="password" name="cnewPassword" required>
+						</div>
+						<input type="submit" value="Modifier" class="ui submit button">
+					</div>
+				</form>
+			</li>
+			<li>
+				<form method="POST" action="http://localhost:8080/profil/<%=login%>/description">
+					<h3>Description :</h3>
+					<textarea name="description" rows="4" cols="50"><%=description%></textarea>
+					<p style="color:<%=color%>"><%=msgDescription%></p>
+					<input type="submit" class="green ui button" value="Modifier la description">
+				</form>
+			</li>
+			<li>
+				<h3>Amis : </h3>
+				<p style="color:<%=color%>"><%=msgFriend%></p>
+				<% if (friends) { %>
+				<div class="ui cards">
+					<% friends.forEach((friend) => { %>
+					<div class="card">
+						<div class="content">
+		      				<img class="right floated mini ui image" 
+		      				src="/<%=friend.identifiantSite%>/<%=friend.image%>">
+		      				<div class="header">
+		        				<%=friend.identifiantSite%>
+		      				</div>
+		      			</div>
+		      			<div class="extra content">
+			    	<form method="POST" 
+			    action="http://localhost:8080/profil/<%=login%>/removeFriend/<%=friend.identifiantSite%>">
+			        		<input type="submit" class="ui red button" value="Supprimer de vos amis">
+		        	</form> 
+			    		</div>		
+			        </div>
+			      	<% }) %>
+				</div>
+				<% } else { %>
+					<p>Vous n'avez aucun ami.</p>
+				<% } %>
+			</li>
+		<br><br><br><br><br>
+	<% include footer %>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JSocial - Amis</title>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+</head>
+<body>
+	<% include navbar %>
+	<br><br>
+	<style>
+		#listFriends,#message{
+			display: inline-block;
+			vertical-align: top;
+		}
+		#listFriends{width:25%;}
+		#message{width:50%;text-align: center;background-color: rgb(27, 28, 29);color:white;}
+	</style>
+	<% if (friends) { %>
+		<center><h3>Sélectionnez 1 ami pour discuter avec lui.</h3></center>
+		<br>
+		<div>
+			<div id="listFriends" class="ui vertical pointing menu">
+				<% friends.forEach((friend) => { %>
+					<a class=<%if(dest && dest==friend.identifiantSite){%>"active item"<%}else{%>"item"<%}%> 
+						href="http://localhost:8080/discuter/<%=login%>/<%=friend.identifiantSite%>">
+	      				<img class="left floated mini ui image" src="/<%=friend.identifiantSite%>/<%=friend.image%>">
+	      				<%=friend.identifiantSite%>
+	      			</a>
+				<% }) %>
+			</div>
+			<% if (dest) { %>
+				<div id="message">
+				<% 	if (discussion.length) { %>
+				<%    discussion.forEach((message) => { %> 
+					<% if (message.auteur==login) { %>
+	  					<h4><span style="color:dodgerblue"><%=message.auteur%></span>, <%=message.date_envoi%></h4>
+	  				<% } else { %>
+	  					<h4><span style="color:orange"><%=message.auteur%></span>, <%=message.date_envoi%></h4>
+	  				<% } %>
+	  				<textarea readonly><%=message.contenu%></textarea>
+	      		<%    }) }  %>
+		    	<form  action="http://localhost:8080/message/<%=login%>/<%=dest%>"
+					class="" method="POST">
+					<textarea name="contenu" rows="3" cols="40"></textarea><br>
+					<input type="submit" class="ui green button" value="Envoyer">
+				</form>
+			</div>
+			<% } %>
+		</div>
+		
+	<% } else { %>
+		<center><h3>Vous n'avez aucun ami.</h3></center>
+	<% } %>
+	<br><br><br><br><br><br>
+	<% include footer %>
